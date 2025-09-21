@@ -6,11 +6,20 @@ let lines = []; // {time, orig, es}
 
 async function loadLyrics(){
   try{
-    const resp = await fetch('lyrics.json');
-    if(!resp.ok) throw new Error('No lyrics.json');
+    console.log('Intentando cargar lyrics.json...');
+    const resp = await fetch('./lyrics.json');
+    if(!resp.ok) {
+      console.warn('No se pudo cargar lyrics.json, usando letras por defecto');
+      throw new Error('No lyrics.json');
+    }
     const data = await resp.json();
-    lines = data;
+    console.log('Datos cargados:', data);
+    
+    // Si el JSON tiene doble array, usar el primer elemento
+    lines = Array.isArray(data[0]) ? data[0] : data;
+    console.log('Líneas procesadas:', lines.length);
   }catch(e){
+    console.warn('Error cargando lyrics:', e);
     // default placeholder lines (no copyright lyrics)
     lines = [
   { "time": 25.1, "orig": "Todo cambió" },
